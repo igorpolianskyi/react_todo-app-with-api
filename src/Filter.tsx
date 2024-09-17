@@ -22,38 +22,6 @@ export const Filter: React.FC<Props> = ({ filtered, setFiltered }) => {
           {filterType}
         </a>
       ))}
-      {/* <a
-        href="#/"
-        className={classNames('filter__link', {
-          selected: filtered === FilterType.All,
-        })}
-        data-cy="FilterLinkAll"
-        onClick={() => setFiltered(FilterType.All)}
-      >
-        All
-      </a>
-
-      <a
-        href="#/active"
-        className={classNames('filter__link', {
-          selected: filtered === FilterType.Active,
-        })}
-        data-cy="FilterLinkActive"
-        onClick={() => setFiltered(FilterType.Active)}
-      >
-        Active
-      </a>
-
-      <a
-        href="#/completed"
-        className={classNames('filter__link', {
-          selected: filtered === FilterType.Completed,
-        })}
-        data-cy="FilterLinkCompleted"
-        onClick={() => setFiltered(FilterType.Completed)}
-      >
-        Completed
-      </a> */}
     </nav>
   );
 };
