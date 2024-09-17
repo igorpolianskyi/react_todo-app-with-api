@@ -13,12 +13,13 @@ import {
 import { Todo } from './types/Todo';
 import { TodoList } from './TodoList';
 import classNames from 'classnames';
-import { Filter } from './Filter';
+import { Footer } from './Footer';
+import { FilterType } from './types/FilterType';
 
 export const App: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [filtered, setFiltered] = useState('all');
+  const [filtered, setFiltered] = useState(FilterType.All);
   const [titleTodo, setTitleTodo] = useState('');
   const [inputTodo, setInputTodo] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,11 +47,11 @@ export const App: React.FC = () => {
   }, [inputTodo]);
 
   const filteredTodos = todos.filter(todo => {
-    if (filtered === 'active') {
+    if (filtered === FilterType.Active) {
       return !todo.completed;
     }
 
-    if (filtered === 'completed') {
+    if (filtered === FilterType.Completed) {
       return todo.completed;
     }
 
@@ -59,7 +60,7 @@ export const App: React.FC = () => {
 
   const todosCounter = todos.filter(todo => !todo.completed).length;
 
-  function deletePost(todoId: number): Promise<void> {
+  const deletePost = (todoId: number): Promise<void> => {
     setInputTodo(false);
     setIsLoading(true);
 
@@ -78,9 +79,9 @@ export const App: React.FC = () => {
         setInputTodo(true);
         setIsLoading(false);
       });
-  }
+  };
 
-  function addTodo({ userId, title, completed }: Todo) {
+  const addTodo = ({ userId, title, completed }: Todo) => {
     postTodos({ userId, title, completed })
       .then(newTodo => {
         setTodos(currentTodos => [...currentTodos, newTodo]);
@@ -91,9 +92,9 @@ export const App: React.FC = () => {
         setInputTodo(true);
         setTempTodo(null);
       });
-  }
+  };
 
-  const HandleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
     if (!titleTodo.trim()) {
@@ -116,15 +117,15 @@ export const App: React.FC = () => {
     addTodo(newTempTodo);
   };
 
-  const HandleTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitleTodo(event.target.value);
   };
 
-  const HandleErrorClose = () => {
+  const handleErrorClose = () => {
     setErrorMessage('');
   };
 
-  const HandleClearCompleted = () => {
+  const handleClearCompleted = () => {
     todos.map(todo => {
       if (todo.completed === true) {
         deletePost(todo.id);
@@ -151,7 +152,7 @@ export const App: React.FC = () => {
       });
   };
 
-  const HandleToggleAll = () => {
+  const handleToggleAll = () => {
     const notMixed = todosCounter === 0 || todosCounter === todos.length;
 
     todos.map(todo => {
@@ -228,19 +229,19 @@ export const App: React.FC = () => {
                 active: todosCounter === 0,
               })}
               data-cy="ToggleAllButton"
-              onClick={HandleToggleAll}
+              onClick={handleToggleAll}
             />
           )}
 
           {/* Add a todo on form submit */}
-          <form onSubmit={HandleSubmit}>
+          <form onSubmit={handleSubmit}>
             <input
               data-cy="NewTodoField"
               type="text"
               value={titleTodo}
               className="todoapp__new-todo"
               placeholder="What needs to be done?"
-              onChange={HandleTitle}
+              onChange={handleTitle}
               ref={inputFocus}
               disabled={!inputTodo}
             />
@@ -258,26 +259,14 @@ export const App: React.FC = () => {
         />
 
         {/* Hide the footer if there are no todos */}
-        {todos.length !== 0 && (
-          <footer className="todoapp__footer" data-cy="Footer">
-            <span className="todo-count" data-cy="TodosCounter">
-              {todosCounter} items left
-            </span>
-
-            {/* Active link should have the 'selected' class */}
-            <Filter filtered={filtered} setFiltered={setFiltered} />
-
-            {/* this button should be disabled if there are no completed todos */}
-            <button
-              type="button"
-              className="todoapp__clear-completed"
-              onClick={HandleClearCompleted}
-              data-cy="ClearCompletedButton"
-              disabled={todosCounter === todos.length}
-            >
-              Clear completed
-            </button>
-          </footer>
+        {!!todos.length && (
+          <Footer
+            todosCounter={todosCounter}
+            filtered={filtered}
+            setFiltered={setFiltered}
+            HandleClearCompleted={handleClearCompleted}
+            todos={todos}
+          />
         )}
       </div>
 
@@ -290,7 +279,7 @@ export const App: React.FC = () => {
       >
         <button
           data-cy="HideErrorButton"
-          onClick={HandleErrorClose}
+          onClick={handleErrorClose}
           type="button"
           className="delete"
         />

@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { FilterType } from './types/FilterType';
 
 type Props = {
   filtered: string;
@@ -8,11 +9,26 @@ type Props = {
 export const Filter: React.FC<Props> = ({ filtered, setFiltered }) => {
   return (
     <nav className="filter" data-cy="Filter">
-      <a
+      {Object.values(FilterType).map((filterType, index) => (
+        <a
+          key={index}
+          href="#/"
+          className={classNames('filter__link', {
+            selected: filtered === filterType,
+          })}
+          data-cy={`FilterLink${filterType}`}
+          onClick={() => setFiltered(filterType)}
+        >
+          {filterType}
+        </a>
+      ))}
+      {/* <a
         href="#/"
-        className={classNames('filter__link', { selected: filtered === 'all' })}
+        className={classNames('filter__link', {
+          selected: filtered === FilterType.All,
+        })}
         data-cy="FilterLinkAll"
-        onClick={() => setFiltered('all')}
+        onClick={() => setFiltered(FilterType.All)}
       >
         All
       </a>
@@ -20,10 +36,10 @@ export const Filter: React.FC<Props> = ({ filtered, setFiltered }) => {
       <a
         href="#/active"
         className={classNames('filter__link', {
-          selected: filtered === 'active',
+          selected: filtered === FilterType.Active,
         })}
         data-cy="FilterLinkActive"
-        onClick={() => setFiltered('active')}
+        onClick={() => setFiltered(FilterType.Active)}
       >
         Active
       </a>
@@ -31,13 +47,13 @@ export const Filter: React.FC<Props> = ({ filtered, setFiltered }) => {
       <a
         href="#/completed"
         className={classNames('filter__link', {
-          selected: filtered === 'completed',
+          selected: filtered === FilterType.Completed,
         })}
         data-cy="FilterLinkCompleted"
-        onClick={() => setFiltered('completed')}
+        onClick={() => setFiltered(FilterType.Completed)}
       >
         Completed
-      </a>
+      </a> */}
     </nav>
   );
 };
